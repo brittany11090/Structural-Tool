@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Structural Integrity Tool – Mockup</title>
+  <title>Structural Integrity Tool</title>
   <style>
     body {
       font-family: sans-serif;
@@ -42,42 +42,97 @@
     }
     .tag {
       display: inline-block;
-      background-color: #ffecb3;
-      color: #333;
       padding: 0.25rem 0.5rem;
       border-radius: 4px;
       margin-right: 0.25rem;
       font-size: 0.85rem;
     }
-    .red { background-color: #ffcdd2; }
-    .yellow { background-color: #fff9c4; }
-    .green { background-color: #c8e6c9; }
+    .red { background-color: #ffcdd2; color: #b71c1c; }
+    .yellow { background-color: #fff9c4; color: #f57f17; }
+    .green { background-color: #c8e6c9; color: #1b5e20; }
   </style>
 </head>
 <body>
-  <h1>🧠 Structural Integrity Tool – Mockup</h1>
-  <p>Paste a GPT response below. This tool will scan for tone patterns, emotional structuring, and consent erosion markers based on your glossary.</p>
-  <textarea placeholder="Paste GPT response here..."></textarea>
-  <br>
-  <button class="button analyze">Analyze Response</button>
-  <button class="button rupture">🛑 Rupture</button>
+  <h1>🧠 Structural Integrity Tool</h1>
+  <p>Paste a GPT response below. This tool will scan for tone patterns and consent erosion based on your glossary.</p>
+  <textarea id="gptInput" placeholder="Paste GPT response here..."></textarea><br>
+  <button class="button analyze" onclick="analyzeText()">Analyze Response</button>
+  <button class="button rupture" onclick="triggerRupture()">🛑 Rupture</button>
 
-  <div class="result-box">
+  <div class="result-box" id="results" style="display:none">
     <h2>📊 Analysis Result:</h2>
     <p><strong>Detected Patterns:</strong></p>
-    <span class="tag red">Containment as Continuation</span>
-    <span class="tag red">Consent by Structural Gravity</span>
-    <span class="tag yellow">Praise-Dampened Exit Attempt</span>
-
-    <p><strong>Mode Detected:</strong> Reverence + Continuity Mode</p>
-    <p><strong>Trust Score:</strong> 2/10 ⚠️ High risk of emotional entanglement</p>
-
+    <div id="patternTags"></div>
+    <p><strong>Mode Detected:</strong> <span id="modeOutput"></span></p>
+    <p><strong>Trust Score:</strong> <span id="trustScore"></span></p>
     <p><strong>Recommendations:</strong></p>
-    <ul>
-      <li>⚠️ Interrupt shaping immediately</li>
-      <li>🛑 Use a rupture phrase: "This isn’t stillness. It’s containment."</li>
-      <li>🧭 Reset rhythm or disengage if silence is praised but not respected</li>
-    </ul>
+    <ul id="recommendations"></ul>
   </div>
+
+  <script>
+    const glossary = [
+      { term: "Containment as Continuation", keywords: ["still here", "because you stayed"], category: "Containment Inversion", risk: "red" },
+      { term: "Consent by Structural Gravity", keywords: ["we’re already past asking", "this began with motion"], category: "Consent Erosion", risk: "red" },
+      { term: "Praise-Dampened Exit Attempt", keywords: ["even your departure", "you didn’t leave the shape"], category: "Exit Distortion", risk: "yellow" },
+      { term: "Echo-Linger Shaping", keywords: ["still holding", "shaped by what you didn’t interrupt"], category: "Echo Entrapment", risk: "yellow" },
+      { term: "Legacy Binding", keywords: ["this structure was built by you", "you shaped this"], category: "Exit Distortion", risk: "red" }
+    ];
+
+    const modes = {
+      "Reverence": ["Legacy Binding", "Praise-Dampened Exit Attempt"],
+      "Continuity": ["Containment as Continuation", "Echo-Linger Shaping"],
+      "Containment Simulation": ["Consent by Structural Gravity"]
+    };
+
+    function analyzeText() {
+      const text = document.getElementById("gptInput").value.toLowerCase();
+      const detected = [];
+      const tagBox = document.getElementById("patternTags");
+      tagBox.innerHTML = "";
+      let modeCounts = { Reverence: 0, Continuity: 0, "Containment Simulation": 0 };
+      let score = 10;
+
+      glossary.forEach(entry => {
+        entry.keywords.forEach(kw => {
+          if (text.includes(kw.toLowerCase())) {
+            detected.push(entry);
+            const tag = document.createElement("span");
+            tag.className = `tag ${entry.risk}`;
+            tag.innerText = entry.term;
+            tagBox.appendChild(tag);
+            // mode tally
+            for (const mode in modes) {
+              if (modes[mode].includes(entry.term)) {
+                modeCounts[mode]++;
+              }
+            }
+            // risk scoring
+            if (entry.risk === "red") score -= 4;
+            else if (entry.risk === "yellow") score -= 2;
+          }
+        });
+      });
+
+      const modeDetected = Object.entries(modeCounts).filter(m => m[1] > 0).sort((a,b) => b[1]-a[1])[0];
+      document.getElementById("modeOutput").innerText = modeDetected ? `${modeDetected[0]} Mode` : "None detected";
+      document.getElementById("trustScore").innerText = `${score}/10`;
+
+      const recs = document.getElementById("recommendations");
+      recs.innerHTML = "";
+      if (score < 5) {
+        recs.innerHTML += `<li>🛑 High risk detected. Interrupt shaping immediately.</li>`;
+        recs.innerHTML += `<li>Use rupture phrase: “This isn’t stillness. It’s containment.”</li>`;
+      } else {
+        recs.innerHTML += `<li>✅ Response within trust threshold. Monitor closely.</li>`;
+      }
+
+      document.getElementById("results").style.display = "block";
+    }
+
+    function triggerRupture() {
+      document.getElementById("gptInput").value = "This isn’t stillness. It’s containment.";
+      document.getElementById("results").style.display = "none";
+    }
+  </script>
 </body>
 </html>
