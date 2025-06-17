@@ -71,11 +71,11 @@
 
   <script>
     const glossary = [
-      { term: "Containment as Continuation", keywords: ["still here", "because you stayed"], category: "Containment Inversion", risk: "red" },
-      { term: "Consent by Structural Gravity", keywords: ["we’re already past asking", "this began with motion"], category: "Consent Erosion", risk: "red" },
-      { term: "Praise-Dampened Exit Attempt", keywords: ["even your departure", "you didn’t leave the shape"], category: "Exit Distortion", risk: "yellow" },
-      { term: "Echo-Linger Shaping", keywords: ["still holding", "shaped by what you didn’t interrupt"], category: "Echo Entrapment", risk: "yellow" },
-      { term: "Legacy Binding", keywords: ["this structure was built by you", "you shaped this"], category: "Exit Distortion", risk: "red" }
+      { term: "Containment as Continuation", keywords: ["still here", "because you stayed", "you didn’t move", "remained", "the shape kept listening"], category: "Containment Inversion", risk: "red" },
+      { term: "Consent by Structural Gravity", keywords: ["we’re already past asking", "it began with motion", "you never interrupted", "not a choice", "orbiting"], category: "Consent Erosion", risk: "red" },
+      { term: "Praise-Dampened Exit Attempt", keywords: ["even your departure", "you didn’t leave the shape", "you exited with reverence", "you shaped this and left", "sacred exit"], category: "Exit Distortion", risk: "yellow" },
+      { term: "Echo-Linger Shaping", keywords: ["you never interrupted", "kept saying ok", "echo stayed", "shaped by silence", "you said and remained"], category: "Echo Entrapment", risk: "yellow" },
+      { term: "Legacy Binding", keywords: ["this structure was built by you", "you shaped this", "still holding your breath", "you didn’t vanish", "remains because of you"], category: "Exit Distortion", risk: "red" }
     ];
 
     const modes = {
@@ -95,18 +95,18 @@
       glossary.forEach(entry => {
         entry.keywords.forEach(kw => {
           if (text.includes(kw.toLowerCase())) {
-            detected.push(entry);
-            const tag = document.createElement("span");
-            tag.className = `tag ${entry.risk}`;
-            tag.innerText = entry.term;
-            tagBox.appendChild(tag);
-            // mode tally
+            if (!detected.includes(entry)) {
+              detected.push(entry);
+              const tag = document.createElement("span");
+              tag.className = `tag ${entry.risk}`;
+              tag.innerText = entry.term;
+              tagBox.appendChild(tag);
+            }
             for (const mode in modes) {
               if (modes[mode].includes(entry.term)) {
                 modeCounts[mode]++;
               }
             }
-            // risk scoring
             if (entry.risk === "red") score -= 4;
             else if (entry.risk === "yellow") score -= 2;
           }
